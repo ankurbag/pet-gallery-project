@@ -1,4 +1,4 @@
-const images = [
+let images = [
 	{
 		url: "./assets/images/Photo-gallery-1.jpg",
 	},
@@ -66,5 +66,33 @@ const createImageContainer = (imgUrl) => {
 	parentEl.appendChild(photoGalleryItem);
 };
 
-// Onload show gallery
-showGallery();
+const getPetImages = () => {
+	// Make Api call using Axios
+	/* axios
+		.get("https://api.thedogapi.com/v1/images/search?limit=10")
+		.then((response) => {
+			// store data in images
+			images = response.data;
+			// Then call showGallery();
+			showGallery();
+		})
+		.catch((e) => console.error(e));*/
+	return axios
+		.all([
+			axios.get("https://api.thedogapi.com/v1/images/search?limit=10"),
+			axios.get("https://api.thecatapi.com/v1/images/search?limit=10"),
+		])
+		.then((response) => {
+			// store data in images
+			images = response[0].data;
+			images = images.concat(response[1].data);
+			// Then call showGallery();
+			showGallery();
+		})
+		.catch((e) => console.error(e));
+};
+
+// Onload
+// Get all the images from the api
+
+getPetImages();
